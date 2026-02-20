@@ -1,0 +1,331 @@
+{
+  "sac_story_configuration": {
+    "metadata": {
+      "story_name": "SAC Analytics KPI Dashboard",
+      "version": "1.0.0",
+      "created_date": "2026-01-15",
+      "last_modified": "2026-02-01",
+      "description": "Executive KPI dashboard, sales trend analysis, regional performance, and product drill-down views for SAP Analytics Cloud",
+      "created_by": "SAC Analytics Implementation Team",
+      "data_model": "SAC_SalesAnalytics_Model"
+    },
+    "data_model": {
+      "model_name": "SAC_SalesAnalytics_Model",
+      "model_type": "Analytical",
+      "connection_type": "Import",
+      "refresh_schedule": "Daily at 06:00",
+      "dimensions": [
+        {
+          "id": "dim_date",
+          "name": "Date",
+          "key": "date_key",
+          "label": "full_date",
+          "hierarchy": ["year", "quarter", "month_name", "full_date"],
+          "type": "Date"
+        },
+        {
+          "id": "dim_product",
+          "name": "Product",
+          "key": "product_key",
+          "label": "product_name",
+          "hierarchy": ["category", "sub_category", "brand", "product_name"]
+        },
+        {
+          "id": "dim_customer",
+          "name": "Customer",
+          "key": "customer_key",
+          "label": "customer_name",
+          "hierarchy": ["segment", "industry", "customer_name"]
+        },
+        {
+          "id": "dim_region",
+          "name": "Region",
+          "key": "region_key",
+          "label": "city",
+          "hierarchy": ["region", "country", "sub_region", "city"]
+        },
+        {
+          "id": "dim_employee",
+          "name": "Sales Rep",
+          "key": "employee_key",
+          "label": "full_name",
+          "hierarchy": ["department", "job_title", "full_name"]
+        }
+      ],
+      "measures": [
+        {"id": "M001", "name": "Total Revenue",        "formula": "SUM(sales_amount)",                       "format": "Currency", "currency": "USD"},
+        {"id": "M002", "name": "Gross Margin",         "formula": "SUM(gross_margin)",                       "format": "Currency"},
+        {"id": "M003", "name": "Gross Margin %",       "formula": "SUM(gross_margin)/SUM(sales_amount)*100", "format": "Percent"},
+        {"id": "M004", "name": "Total COGS",           "formula": "SUM(cogs)",                               "format": "Currency"},
+        {"id": "M005", "name": "Order Count",          "formula": "COUNTD(order_id)",                        "format": "Integer"},
+        {"id": "M006", "name": "Avg Order Value",      "formula": "SUM(sales_amount)/COUNTD(order_id)",      "format": "Currency"},
+        {"id": "M007", "name": "Target Attainment %",  "formula": "SUM(sales_amount)/SUM(target_amount)*100","format": "Percent"},
+        {"id": "M008", "name": "Avg Discount %",       "formula": "AVG(discount_pct)*100",                   "format": "Percent"},
+        {"id": "M009", "name": "Revenue per Rep",      "formula": "SUM(sales_amount)/COUNTD(employee_key)",  "format": "Currency"},
+        {"id": "M010", "name": "Customer Count",       "formula": "COUNTD(customer_key)",                    "format": "Integer"},
+        {"id": "M011", "name": "Qty Sold",             "formula": "SUM(quantity)",                           "format": "Integer"},
+        {"id": "M012", "name": "Revenue MoM Growth %", "formula": "([M001] - PREV([M001], [dim_date.month_number])) / PREV([M001], [dim_date.month_number]) * 100", "format": "Percent"}
+      ]
+    },
+    "pages": [
+      {
+        "id": "page_01",
+        "name": "Executive Overview",
+        "description": "High-level KPI summary for C-suite and executive stakeholders",
+        "layout": "grid",
+        "widgets": [
+          {
+            "id": "w_rev",
+            "type": "KPI_tile",
+            "title": "Total Revenue",
+            "measure": "M001",
+            "comparison": "prior_period",
+            "position": {"row": 1, "col": 1},
+            "size": {"width": 3, "height": 2},
+            "thresholds": [
+              {"color": "green",  "operator": ">=", "value": 10000000},
+              {"color": "yellow", "operator": ">=", "value": 7000000},
+              {"color": "red",    "operator": "<",  "value": 7000000}
+            ]
+          },
+          {
+            "id": "w_gm",
+            "type": "KPI_tile",
+            "title": "Gross Margin %",
+            "measure": "M003",
+            "comparison": "prior_year",
+            "position": {"row": 1, "col": 4},
+            "size": {"width": 3, "height": 2},
+            "thresholds": [
+              {"color": "green",  "operator": ">=", "value": 40},
+              {"color": "yellow", "operator": ">=", "value": 25},
+              {"color": "red",    "operator": "<",  "value": 25}
+            ]
+          },
+          {
+            "id": "w_ta",
+            "type": "KPI_tile",
+            "title": "Target Attainment %",
+            "measure": "M007",
+            "comparison": "target",
+            "position": {"row": 1, "col": 7},
+            "size": {"width": 3, "height": 2},
+            "thresholds": [
+              {"color": "green",  "operator": ">=", "value": 100},
+              {"color": "yellow", "operator": ">=", "value": 80},
+              {"color": "red",    "operator": "<",  "value": 80}
+            ]
+          },
+          {
+            "id": "w_aov",
+            "type": "KPI_tile",
+            "title": "Avg Order Value",
+            "measure": "M006",
+            "comparison": "prior_period",
+            "position": {"row": 1, "col": 10},
+            "size": {"width": 3, "height": 2}
+          },
+          {
+            "id": "w_rev_trend",
+            "type": "line_chart",
+            "title": "Monthly Revenue Trend",
+            "measure": "M001",
+            "dimension": "dim_date.month_name",
+            "secondary_measure": "M007",
+            "chart_options": {
+              "show_data_labels": true,
+              "show_reference_line": true,
+              "reference_line_measure": "M001",
+              "reference_line_type": "average"
+            },
+            "position": {"row": 3, "col": 1},
+            "size": {"width": 7, "height": 5}
+          },
+          {
+            "id": "w_rev_by_cat",
+            "type": "bar_chart",
+            "title": "Revenue by Product Category",
+            "measure": "M001",
+            "dimension": "dim_product.category",
+            "orientation": "horizontal",
+            "sort": "descending",
+            "position": {"row": 3, "col": 8},
+            "size": {"width": 5, "height": 5}
+          },
+          {
+            "id": "w_rev_by_region",
+            "type": "geo_map",
+            "title": "Revenue by Region",
+            "measure": "M001",
+            "dimension": "dim_region.country",
+            "position": {"row": 8, "col": 1},
+            "size": {"width": 6, "height": 5}
+          },
+          {
+            "id": "w_segment_donut",
+            "type": "donut_chart",
+            "title": "Revenue by Customer Segment",
+            "measure": "M001",
+            "dimension": "dim_customer.segment",
+            "position": {"row": 8, "col": 7},
+            "size": {"width": 6, "height": 5}
+          }
+        ]
+      },
+      {
+        "id": "page_02",
+        "name": "Sales Trend Analysis",
+        "description": "Detailed time-series trend views with YoY and MoM comparisons",
+        "layout": "grid",
+        "widgets": [
+          {
+            "id": "w_rev_mom",
+            "type": "combo_chart",
+            "title": "Revenue & MoM Growth %",
+            "measures": ["M001", "M012"],
+            "dimension": "dim_date.month_name",
+            "chart_type_measure_2": "line",
+            "position": {"row": 1, "col": 1},
+            "size": {"width": 12, "height": 5}
+          },
+          {
+            "id": "w_rev_yoy",
+            "type": "waterfall_chart",
+            "title": "Revenue YoY Variance",
+            "measure": "M001",
+            "dimension": "dim_date.year",
+            "position": {"row": 6, "col": 1},
+            "size": {"width": 6, "height": 5}
+          },
+          {
+            "id": "w_gm_trend",
+            "type": "area_chart",
+            "title": "Gross Margin % Trend",
+            "measure": "M003",
+            "dimension": "dim_date.month_name",
+            "show_area": true,
+            "position": {"row": 6, "col": 7},
+            "size": {"width": 6, "height": 5}
+          },
+          {
+            "id": "w_channel_trend",
+            "type": "stacked_bar",
+            "title": "Revenue by Channel (Monthly)",
+            "measure": "M001",
+            "dimensions": ["dim_date.month_name", "channel"],
+            "position": {"row": 11, "col": 1},
+            "size": {"width": 12, "height": 5}
+          }
+        ]
+      },
+      {
+        "id": "page_03",
+        "name": "Regional Performance",
+        "description": "Geographic breakdown with target attainment drill-down",
+        "layout": "grid",
+        "widgets": [
+          {
+            "id": "w_region_map",
+            "type": "geo_choropleth",
+            "title": "Revenue Heatmap by Country",
+            "measure": "M001",
+            "dimension": "dim_region.country",
+            "position": {"row": 1, "col": 1},
+            "size": {"width": 8, "height": 6}
+          },
+          {
+            "id": "w_region_kpis",
+            "type": "table",
+            "title": "Region KPI Summary",
+            "measures": ["M001", "M003", "M007", "M005"],
+            "dimension": "dim_region.region",
+            "sort_measure": "M001",
+            "show_totals": true,
+            "conditional_formatting": {
+              "M007": {
+                "green":  {"operator": ">=", "value": 100},
+                "yellow": {"operator": ">=", "value": 80},
+                "red":    {"operator": "<",  "value": 80}
+              }
+            },
+            "position": {"row": 1, "col": 9},
+            "size": {"width": 4, "height": 6}
+          },
+          {
+            "id": "w_region_bar",
+            "type": "bullet_chart",
+            "title": "Revenue vs Target by Region",
+            "actual_measure": "M001",
+            "target_measure": "SUM(target_amount)",
+            "dimension": "dim_region.region",
+            "position": {"row": 7, "col": 1},
+            "size": {"width": 12, "height": 5}
+          }
+        ]
+      },
+      {
+        "id": "page_04",
+        "name": "Product Analysis",
+        "description": "Product drill-down with category, margin, and top-N views",
+        "layout": "grid",
+        "widgets": [
+          {
+            "id": "w_top10_prod",
+            "type": "bar_chart",
+            "title": "Top 10 Products by Revenue",
+            "measure": "M001",
+            "dimension": "dim_product.product_name",
+            "topN": 10,
+            "sort": "descending",
+            "show_data_labels": true,
+            "position": {"row": 1, "col": 1},
+            "size": {"width": 7, "height": 6}
+          },
+          {
+            "id": "w_prod_scatter",
+            "type": "scatter_chart",
+            "title": "Revenue vs Gross Margin % (Products)",
+            "x_measure": "M001",
+            "y_measure": "M003",
+            "size_measure": "M005",
+            "dimension": "dim_product.product_name",
+            "position": {"row": 1, "col": 8},
+            "size": {"width": 5, "height": 6}
+          },
+          {
+            "id": "w_prod_cat_tree",
+            "type": "treemap",
+            "title": "Revenue Treemap by Category → Sub-Category",
+            "measure": "M001",
+            "dimensions": ["dim_product.category", "dim_product.sub_category"],
+            "position": {"row": 7, "col": 1},
+            "size": {"width": 12, "height": 5}
+          }
+        ]
+      }
+    ],
+    "filters": {
+      "global_filters": [
+        {
+          "id": "gf_date",
+          "type": "date_range",
+          "dimension": "dim_date.full_date",
+          "default": "last_12_months",
+          "label": "Date Range"
+        },
+        {
+          "id": "gf_region",
+          "type": "multi_select",
+          "dimension": "dim_region.region",
+          "label": "Region"
+        },
+        {
+          "id": "gf_segment",
+          "type": "multi_select",
+          "dimension": "dim_customer.segment",
+          "label": "Customer Segment"
+        }
+      ]
+    }
+  }
+}
