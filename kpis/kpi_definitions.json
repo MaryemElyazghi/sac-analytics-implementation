@@ -1,0 +1,172 @@
+{
+  "kpi_catalog": {
+    "version": "1.0.0",
+    "last_updated": "2026-02-01",
+    "kpis": [
+      {
+        "id": "KPI-001",
+        "name": "Total Revenue",
+        "category": "Sales",
+        "description": "Sum of all revenue-eligible sales amounts",
+        "formula": "SUM(sales_amount) WHERE order_status != 'Cancelled'",
+        "unit": "currency",
+        "aggregation": "sum",
+        "thresholds": {
+          "excellent": {"operator": ">=", "value": 10000000},
+          "good":      {"operator": ">=", "value": 7000000},
+          "warning":   {"operator": ">=", "value": 4000000},
+          "critical":  {"operator": "<",  "value": 4000000}
+        },
+        "trend_direction": "higher_is_better",
+        "sac_measure_name": "Total Revenue"
+      },
+      {
+        "id": "KPI-002",
+        "name": "Gross Margin Percentage",
+        "category": "Profitability",
+        "description": "Percentage of revenue retained after deducting cost of goods sold",
+        "formula": "(SUM(gross_margin) / SUM(sales_amount)) * 100",
+        "unit": "percentage",
+        "aggregation": "ratio",
+        "thresholds": {
+          "excellent": {"operator": ">=", "value": 55},
+          "good":      {"operator": ">=", "value": 40},
+          "warning":   {"operator": ">=", "value": 25},
+          "critical":  {"operator": "<",  "value": 25}
+        },
+        "trend_direction": "higher_is_better",
+        "sac_measure_name": "Gross Margin %"
+      },
+      {
+        "id": "KPI-003",
+        "name": "Revenue Growth MoM",
+        "category": "Trend",
+        "description": "Month-over-month revenue growth rate",
+        "formula": "((current_month_revenue - prior_month_revenue) / prior_month_revenue) * 100",
+        "unit": "percentage",
+        "aggregation": "calculated",
+        "thresholds": {
+          "excellent": {"operator": ">=", "value": 10},
+          "good":      {"operator": ">=", "value": 5},
+          "warning":   {"operator": ">=", "value": 0},
+          "critical":  {"operator": "<",  "value": 0}
+        },
+        "trend_direction": "higher_is_better",
+        "sac_measure_name": "Revenue Growth MoM %"
+      },
+      {
+        "id": "KPI-004",
+        "name": "Average Order Value",
+        "category": "Sales",
+        "description": "Average revenue per distinct order",
+        "formula": "SUM(sales_amount) / COUNT(DISTINCT order_id)",
+        "unit": "currency",
+        "aggregation": "ratio",
+        "thresholds": {
+          "excellent": {"operator": ">=", "value": 5000},
+          "good":      {"operator": ">=", "value": 2000},
+          "warning":   {"operator": ">=", "value": 500},
+          "critical":  {"operator": "<",  "value": 500}
+        },
+        "trend_direction": "higher_is_better",
+        "sac_measure_name": "Avg Order Value"
+      },
+      {
+        "id": "KPI-005",
+        "name": "Sales Target Attainment",
+        "category": "Performance",
+        "description": "Percentage of sales target achieved",
+        "formula": "(SUM(sales_amount) / SUM(target_amount)) * 100",
+        "unit": "percentage",
+        "aggregation": "ratio",
+        "thresholds": {
+          "excellent": {"operator": ">=", "value": 110},
+          "good":      {"operator": ">=", "value": 100},
+          "warning":   {"operator": ">=", "value": 80},
+          "critical":  {"operator": "<",  "value": 80}
+        },
+        "trend_direction": "higher_is_better",
+        "sac_measure_name": "Target Attainment %"
+      },
+      {
+        "id": "KPI-006",
+        "name": "Total Orders",
+        "category": "Sales",
+        "description": "Count of distinct orders placed",
+        "formula": "COUNT(DISTINCT order_id)",
+        "unit": "count",
+        "aggregation": "count_distinct",
+        "thresholds": {
+          "excellent": {"operator": ">=", "value": 2000},
+          "good":      {"operator": ">=", "value": 1000},
+          "warning":   {"operator": ">=", "value": 500},
+          "critical":  {"operator": "<",  "value": 500}
+        },
+        "trend_direction": "higher_is_better",
+        "sac_measure_name": "Total Orders"
+      },
+      {
+        "id": "KPI-007",
+        "name": "Discount Rate",
+        "category": "Sales",
+        "description": "Average discount percentage applied across all orders",
+        "formula": "AVG(discount_pct) * 100",
+        "unit": "percentage",
+        "aggregation": "average",
+        "thresholds": {
+          "excellent": {"operator": "<=", "value": 5},
+          "good":      {"operator": "<=", "value": 10},
+          "warning":   {"operator": "<=", "value": 20},
+          "critical":  {"operator": ">",  "value": 20}
+        },
+        "trend_direction": "lower_is_better",
+        "sac_measure_name": "Avg Discount %"
+      },
+      {
+        "id": "KPI-008",
+        "name": "Revenue per Employee",
+        "category": "Productivity",
+        "description": "Average revenue generated per active sales employee",
+        "formula": "SUM(sales_amount) / COUNT(DISTINCT employee_key)",
+        "unit": "currency",
+        "aggregation": "ratio",
+        "thresholds": {
+          "excellent": {"operator": ">=", "value": 500000},
+          "good":      {"operator": ">=", "value": 250000},
+          "warning":   {"operator": ">=", "value": 100000},
+          "critical":  {"operator": "<",  "value": 100000}
+        },
+        "trend_direction": "higher_is_better",
+        "sac_measure_name": "Revenue per Rep"
+      },
+      {
+        "id": "KPI-009",
+        "name": "Customer Count",
+        "category": "Customer",
+        "description": "Count of distinct customers with at least one purchase",
+        "formula": "COUNT(DISTINCT customer_key)",
+        "unit": "count",
+        "aggregation": "count_distinct",
+        "thresholds": {
+          "excellent": {"operator": ">=", "value": 200},
+          "good":      {"operator": ">=", "value": 100},
+          "warning":   {"operator": ">=", "value": 50},
+          "critical":  {"operator": "<",  "value": 50}
+        },
+        "trend_direction": "higher_is_better",
+        "sac_measure_name": "Active Customers"
+      },
+      {
+        "id": "KPI-010",
+        "name": "Top 10 Products Revenue Share",
+        "category": "Product",
+        "description": "Percentage of total revenue from top 10 products",
+        "formula": "SUM(top_10_products.sales_amount) / SUM(all.sales_amount) * 100",
+        "unit": "percentage",
+        "aggregation": "calculated",
+        "trend_direction": "informational",
+        "sac_measure_name": "Top 10 Revenue Share %"
+      }
+    ]
+  }
+}
