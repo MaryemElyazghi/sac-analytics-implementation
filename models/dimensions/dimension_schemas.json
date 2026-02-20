@@ -1,0 +1,79 @@
+{
+  "dimensions": {
+    "dim_date": {
+      "description": "Date dimension for time-based analysis",
+      "primary_key": "date_key",
+      "columns": {
+        "date_key":       {"type": "integer",  "format": "YYYYMMDD", "nullable": false},
+        "full_date":      {"type": "date",     "format": "YYYY-MM-DD", "nullable": false},
+        "day_of_week":    {"type": "string",   "example": "Monday", "nullable": false},
+        "day_of_month":   {"type": "integer",  "range": "1-31", "nullable": false},
+        "week_number":    {"type": "integer",  "range": "1-53", "nullable": false},
+        "month_number":   {"type": "integer",  "range": "1-12", "nullable": false},
+        "month_name":     {"type": "string",   "example": "January", "nullable": false},
+        "quarter":        {"type": "string",   "example": "Q1", "nullable": false},
+        "year":           {"type": "integer",  "example": 2025, "nullable": false},
+        "is_weekend":     {"type": "boolean",  "nullable": false},
+        "is_holiday":     {"type": "boolean",  "nullable": false},
+        "fiscal_period":  {"type": "string",   "example": "FY2025-P01", "nullable": false}
+      }
+    },
+    "dim_product": {
+      "description": "Product catalog dimension",
+      "primary_key": "product_key",
+      "columns": {
+        "product_key":      {"type": "integer", "nullable": false},
+        "product_id":       {"type": "string",  "example": "PRD-0001", "nullable": false},
+        "product_name":     {"type": "string",  "nullable": false},
+        "category":         {"type": "string",  "example": "Electronics", "nullable": false},
+        "sub_category":     {"type": "string",  "example": "Laptops", "nullable": false},
+        "brand":            {"type": "string",  "nullable": false},
+        "unit_cost":        {"type": "decimal", "precision": 10, "scale": 2, "nullable": false},
+        "list_price":       {"type": "decimal", "precision": 10, "scale": 2, "nullable": false},
+        "is_active":        {"type": "boolean", "nullable": false},
+        "launch_date":      {"type": "date",    "nullable": true}
+      }
+    },
+    "dim_customer": {
+      "description": "Customer master dimension",
+      "primary_key": "customer_key",
+      "columns": {
+        "customer_key":     {"type": "integer", "nullable": false},
+        "customer_id":      {"type": "string",  "example": "CUST-00001", "nullable": false},
+        "customer_name":    {"type": "string",  "nullable": false},
+        "segment":          {"type": "string",  "example": "Enterprise", "nullable": false},
+        "industry":         {"type": "string",  "example": "Manufacturing", "nullable": false},
+        "email":            {"type": "string",  "nullable": true},
+        "acquisition_date": {"type": "date",    "nullable": false},
+        "is_active":        {"type": "boolean", "nullable": false}
+      }
+    },
+    "dim_region": {
+      "description": "Geographic region dimension",
+      "primary_key": "region_key",
+      "columns": {
+        "region_key":   {"type": "integer", "nullable": false},
+        "country":      {"type": "string",  "nullable": false},
+        "region":       {"type": "string",  "example": "North America", "nullable": false},
+        "sub_region":   {"type": "string",  "example": "Northeast US", "nullable": false},
+        "city":         {"type": "string",  "nullable": false},
+        "currency":     {"type": "string",  "example": "USD", "nullable": false}
+      }
+    },
+    "dim_employee": {
+      "description": "Employee/sales rep dimension",
+      "primary_key": "employee_key",
+      "columns": {
+        "employee_key":   {"type": "integer", "nullable": false},
+        "employee_id":    {"type": "string",  "example": "EMP-001", "nullable": false},
+        "full_name":      {"type": "string",  "nullable": false},
+        "department":     {"type": "string",  "example": "Sales", "nullable": false},
+        "job_title":      {"type": "string",  "example": "Account Executive", "nullable": false},
+        "manager_id":     {"type": "string",  "nullable": true},
+        "hire_date":      {"type": "date",    "nullable": false},
+        "region_key":     {"type": "integer", "fk": "dim_region.region_key", "nullable": false},
+        "is_active":      {"type": "boolean", "nullable": false}
+      }
+    }
+  }
+}

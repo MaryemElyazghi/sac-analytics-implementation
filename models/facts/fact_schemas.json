@@ -1,0 +1,43 @@
+{
+  "facts": {
+    "fact_sales": {
+      "description": "Central sales transaction fact table — grain: one row per order line item",
+      "primary_key": "sales_key",
+      "grain": "One record per order line item per day",
+      "columns": {
+        "sales_key":        {"type": "integer",  "nullable": false, "description": "Surrogate PK"},
+        "order_id":         {"type": "string",   "nullable": false, "description": "Business order ID"},
+        "line_number":      {"type": "integer",  "nullable": false, "description": "Line item within order"},
+        "date_key":         {"type": "integer",  "nullable": false, "fk": "dim_date.date_key"},
+        "product_key":      {"type": "integer",  "nullable": false, "fk": "dim_product.product_key"},
+        "customer_key":     {"type": "integer",  "nullable": false, "fk": "dim_customer.customer_key"},
+        "region_key":       {"type": "integer",  "nullable": false, "fk": "dim_region.region_key"},
+        "employee_key":     {"type": "integer",  "nullable": false, "fk": "dim_employee.employee_key"},
+        "quantity":         {"type": "integer",  "nullable": false, "description": "Units sold"},
+        "unit_price":       {"type": "decimal",  "precision": 10, "scale": 2, "description": "Actual selling price"},
+        "discount_pct":     {"type": "decimal",  "precision": 5,  "scale": 2, "description": "Discount percentage applied"},
+        "sales_amount":     {"type": "decimal",  "precision": 14, "scale": 2, "description": "Revenue = quantity × unit_price × (1 - discount_pct)"},
+        "cogs":             {"type": "decimal",  "precision": 14, "scale": 2, "description": "Cost of goods sold"},
+        "gross_margin":     {"type": "decimal",  "precision": 14, "scale": 2, "description": "sales_amount - cogs"},
+        "target_amount":    {"type": "decimal",  "precision": 14, "scale": 2, "description": "Sales target for that period/product/rep"},
+        "order_status":     {"type": "string",   "nullable": false, "values": ["Open", "Confirmed", "Shipped", "Delivered", "Cancelled"]},
+        "channel":          {"type": "string",   "nullable": false, "values": ["Direct", "Partner", "Online", "Retail"]},
+        "created_at":       {"type": "timestamp","nullable": false},
+        "updated_at":       {"type": "timestamp","nullable": false}
+      },
+      "derived_measures": {
+        "gross_margin_pct":         "gross_margin / sales_amount * 100",
+        "target_attainment_pct":    "sales_amount / target_amount * 100",
+        "avg_order_value":          "SUM(sales_amount) / COUNT(DISTINCT order_id)",
+        "discount_impact":          "quantity * unit_price * discount_pct"
+      },
+      "indexes": [
+        {"columns": ["date_key"], "type": "btree"},
+        {"columns": ["product_key"], "type": "btree"},
+        {"columns": ["customer_key"], "type": "btree"},
+        {"columns": ["region_key"], "type": "btree"},
+        {"columns": ["date_key", "product_key", "customer_key"], "type": "composite"}
+      ]
+    }
+  }
+}
